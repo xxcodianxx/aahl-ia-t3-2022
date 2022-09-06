@@ -13,6 +13,7 @@
 \usepackage{subfig}
 \usepackage{setspace}
 \usepackage{graphicx}
+\usepackage{multicol}
 \graphicspath{ {./res/} }
 
 \doublespacing % Set line spacing to 1.5
@@ -31,10 +32,8 @@
 \maketitle
 \tableofcontents
 
-\pagebreak
 % content
 \section{Introduction}
-\subsection{Background}
 Walking is one of the things that we do most as humans. It is the most
 fundamental way of transportation, serving us faithfully for roughly 6 million
 years. As one of the few bipedal mammals on the Earth, our motion during walking
@@ -65,7 +64,13 @@ discomfort and opening the possibilities for a more broad adoption of VR
 technology.
 
 \subsection{Personal motivation}
-todo
+Personally, I am interested in the ways technology can help us in our daily
+lives. Being able to reliably apply a model to aid the aforementioned usecases
+would be a tremendous achievement that would help integrate technology into
+modern lives. 
+I also have an interest in physiology \& fitness,
+and so being able to apply mathematics to the area is an intriguing \& exciting
+opportunity.
 
 \section{Data collection}
 \subsection{Background}
@@ -107,7 +112,7 @@ software, albeit with a more elaborate setup than my improvised one.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{mocap_software}
+    \includegraphics[width=8cm]{mocap_software}
     \caption{Motion tracking setup with person in the middle of a step}
     \label{mocap}
 \end{figure}
@@ -123,10 +128,11 @@ anything that would have been achieved with the two initially proposed data
 collection methods.
 
 \subsection{Results}
+\label{results}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{head_vert.png}
+    \includegraphics[width=12cm]{head_vert.png}
     \caption{Vertical motion of head}
     \label{head_y}
 \end{figure}
@@ -143,7 +149,7 @@ the general vertical motion of the body in this case.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{feet_vert.png}
+    \includegraphics[width=12cm]{feet_vert.png}
     \caption{Vertical motion of feet over time}
     \label{feet_y}
 \end{figure}
@@ -161,7 +167,7 @@ The small amount of curvature that precedes the large peak is most likely caused
 by the heel being lifted in the air as the foot is getting ready for another
 step. This is further supported by the fact that at the beginning, the left
 foot's first trough is far sharper than the succeeding ones, because one leg of
-the person walking would be starting the step from a standstill. \\
+the person walking would be starting the step from a standstill.
 
 It is also noteworthy to talk about the small secondary bump following the
 crest, visible in all crests, but most prominent in the second step of the right
@@ -173,7 +179,7 @@ enough to the point where it cannot be disregarded as simple error.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=11cm]{motion_horiz.png}
+    \includegraphics[width=13cm]{motion_horiz.png}
     \caption{Horizontal motion of ankles and head}
     \label{horiz}
 \end{figure}
@@ -221,7 +227,7 @@ regression with some cost function will work nicely. For the cost function, the
 "least squares" has been chosen for its simplicity, effectivity and widespread
 use.
 
-\pagebreak
+% \pagebreak
 \section{Least squares polynomial fitting}
 \subsection{Theory}
 Suppose that there is a polynomial $P$ of degree $k$ so that
@@ -277,11 +283,11 @@ graph of $P$ could be simply represented by
     r=|y-P(x)|
 \end{align*}
 
-The absolute value of the difference is used, as $r$ should be indicative of the
-deviation from the graph, the direction of difference is irrelevant.
-Additionally, instead  of taking its modulus, it can simply be squared in order
-to accentuate any error, and be wieldy to derive.  This leaves the final
-equation of the difference $r$ between a point $(x, y)$ as
+The absolute value of the difference is used since $r$ should be indicative of
+the deviation from the graph, therefore the direction of difference is
+irrelevant. Furthermore, instead  of taking the modulus of the right side, it
+can simply be squared in order to accentuate any error, and be wieldy to derive.
+This leaves the final equation of the difference $r$ between a point $(x, y)$ as
 
 \begin{align*}
     r=(y-P(x))^2
@@ -301,14 +307,14 @@ The partial derivative of the residual with respect to each coefficient can be
 found, and set to zero in order to ensure that coefficient contributes a minimum
 of the error in terms of the entire equation - this effectively minimizes $R^2$,
 which is the goal of this method. This results in the following system of
-equations:
+equations with partial derivatives that must be brought to zero:
 
 \begin{align*}
-    \frac{\partial (R^2)}{\partial a_0}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^0     & = 0 \\
-    \frac{\partial (R^2)}{\partial a_1}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^1     & = 0 \\
-                                            & \vdotswithin{=}                             \\
-    \frac{\partial (R^2)}{\partial a_{k-1}} & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^{k-1} & = 0 \\
-    \frac{\partial (R^2)}{\partial a_k}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^k     & = 0
+    \pdv{(R^2)}{a_0}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^0     & = 0 \\
+    \pdv{(R^2)}{a_1}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^1     & = 0 \\
+                         & \vdotswithin{=}                             \\
+    \pdv{(R^2)}{a_{k-1}} & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^{k-1} & = 0 \\
+    \pdv{(R^2)}{a_k}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^k     & = 0
 \end{align*}
 
 From this point, the method requires solving the above system for the most
@@ -363,11 +369,11 @@ Now that the underlying method that powers this type of polynomial regression is
 known, it is possible to apply it to the dataset. While a polynomial might
 accurately model one crest or trough of a step, in reality it would not be
 practical to model the entire collected data-set with just one. There are
-several ways to account for these issues. \\
+several methods to account for this issue which will be explored below. \\
 
 \subsubsection{Even "naive" subdivision}
 \label{section_naive_seg}
-A naive solution to this problem is to segment the entire domain into even
+A naive solution to the problem is to segment the entire domain into even
 chunks, then fit a polynomial to the portion of the graph (drawn as a punctured
 line) in those subregions (divided vertically with dotted lines):
 
@@ -407,9 +413,10 @@ the graph are fitted far better than others, like the first crest compared to
 the second, which, due to the naive segmentation, is forcefully cut in two.  \\
 
 While this method is a good start, it has a plethora of shortcomings which can
-be addressed quite easily. In general, the fit of the graph is quite poor 
+be addressed quite easily. In general, the fit of the graph is quite poor.
 
 \subsubsection{Crest \& trough subdivision}
+\label{crest_trough_subdivision}
 In order to address the issues found in \ref{section_naive_seg}, and take
 advantage of the patterns identified, we are going to have to examine our
 dataset more closely. Polynomial functions are able to fit a dataset
@@ -426,9 +433,9 @@ and they can almost perfectly be fit by a quadratic.
     \subfloat[\centering Example of a quadratic with a poor fit]{
         \includegraphics[width=0.5\textwidth]{bad_fit.png}
         \label{bad_quadratic}
-    } 
+    }
     \caption{ Examples of how the region over which a polynomial is fit can
-    drastically affect the accuracy of the fit }
+        drastically affect the accuracy of the fit }
     \label{bad_good_quadratics}
 \end{figure}
 
@@ -455,7 +462,7 @@ points relative to the central point have inverted.
     \centering
     \includegraphics[width=14cm]{p_peaks_head_2.png}
     \caption{ Quadratic fitting for vertical head oscillation data with crest \&
-        trough detection} 
+        trough detection}
     \label{peaks_head}
 \end{figure}
 
@@ -463,15 +470,15 @@ Figure \ref{peaks_head} demonstrates this detection method in action - the red
 dashed vertical lines show the point at which a crest or trough was detected,
 and the blue dotted lines show the start \& end of each fitting region. These
 region borders are placed between each crest or trough, by averaging their
-position in the domain. Compared to the naive fit seen in Figure
-\ref{naive_head}, this is certainly a much better outcome as we can see the
-quadratics' curves being used more effectively around the peaks.
+x-coordinates. Compared to the naive fit seen in Figure \ref{naive_head}, this
+is certainly a much better outcome as we can see the quadratics' curves being
+used more effectively around the peaks.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=14cm]{p_peaks_crestsonly_head_2.png}
     \caption{ Quadratic fitting for vertical head oscillation data with crest
-        detection only } 
+        detection only }
     \label{crestsonly_head}
 \end{figure}
 
@@ -487,7 +494,7 @@ concave down.
     \centering
     \includegraphics[width=14cm]{p_peaks_right_3.png}
     \caption{ Cubic fitting for vertical right foot oscillation data with crest
-        \& trough detection } 
+        \& trough detection }
     \label{peaks_right}
 \end{figure}
 
@@ -498,8 +505,8 @@ However, it should be noted that the data for the motion of feet is
 significantly more complex to model than the data for the head, hence the
 comparative inaccuracy of the fit. In the end, even though there is some
 evidence of improvement from the previous method for dividing subregions for the
-vertical oscillation of the feet, it is still insufficient to draw conclusions
-from.
+vertical oscillation of the feet, it is still too inaccurate to be used for the
+final model.
 
 \subsubsection{Manual subdivision}
 Although a fitting solution has been found for the graph of the vertical
@@ -507,16 +514,237 @@ oscillation of the head while walking (Figure \ref{crestsonly_head}), in order
 to fit a polynomial to the more complex graphs of the feet, a more precise
 method is required. \\
 
-As the peaks observed in these graphs appear to repeat over a period, it would
+As the crests observed in these graphs appear to repeat over a period, it would
 potentially be useful to fit a polynomial to one of these by manually specifying
 the domain. This would then allow us to extrapolate the fitted polynomial to
-other peaks. \\
+other crests, and apply the insight learned from the previous attempts at
+fitting. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=14cm]{p_manual_right.png}
+    \caption{ Cubic \& quadratic fitting for vertical right foot oscillation
+        data by manually selecting the fitting region }
+    \label{manual_right}
+\end{figure}
+
+Figure \ref{manual_right} demonstrates a manual fit of a quadratic for $1.6 \le
+    x \le 1.9$ and a cubic for $1.9 \le x \le 2.3$. Based on the knowledge of the
+efficacy of concave down quadratics at modeling crests explored in Section
+\ref{crest_trough_subdivision}, a quadratic has been used in that region, which
+appears to fit well. Similarly, a flat area can be observed to the right of the
+peak, which happens to almost perfectly be modelled by a cubic, with a
+stationary point in the middle of the flat area. From these results, it is safe
+to say that this combination of a quadratic and cubic is sufficient to model the
+crests of vertical oscillation in feet.
 
 \subsection{Assembling}
+In order to assemble the final model for the vertical oscillation while walking,
+we can draw on the best fitting methods to model the oscillation of the head and
+feet. For the head, the "crest-only concave down quadratic" fit depicted in
+Figure \ref{crestsonly_head} seems like the best choice due to how accurately it
+represents the original data using very few quadratic equations. \\
+
+\subsubsection{Head vertical oscillation}
+The quadratic equations returned by the regression process are in standard form.
+In order to make the equations more wieldy to work with, it would be sensible to
+convert them into vertex form, as this gives us the coordinate of the crest's
+peak, which can prove useful if we're trying to figure out the periodicity of
+the dataset. \\
+
+For this conversion, it is a good start to first find the roots $r_1$ and $r_2$
+of the quadratic $Q(x)$ using the quadratic formula:
+
+
+\begin{align*}
+    \text{Given $Q(x) = ax^2 + bx + c$,} \\
+    \Delta = b^2 - 4ac                   \\
+    r_1    = \frac{-b + \sqrt{\Delta}}{2a},
+    r_2    = \frac{-b - \sqrt{\Delta}}{2a}
+\end{align*}
+
+As the vertex lies perfectly in the middle of the two roots, finding its
+x-coordinate $h$ is easy to do by just averaging the roots:
+Then, evaluating $Q(h)$ would also give us the y-coordinate $k$ of the vertex.
+
+\begin{align*}
+    h & = \frac{r_1 + r_2}{2}  \\
+    k & = Q(h) = ah^2 + bh + c
+\end{align*}
+
+Using the values for $h$ and $k$, it is now possible to express the original
+quadratic in the vertex form $Q(x)=a(x-h)^2+k$. Evaluating this for the first
+two equations $Q_1(x)$ and $Q_2(x)$ fit to the crests of the vertical head
+oscillation data:
+
+\begin{align*}
+    Q_1(x) & = -22.43x^2 + 10.57x + 173.84                                                                                                          \\
+    \Delta & = 10.57^2 - 4(-22.43)(173.84) \approx 15708.650                                                                                        \\[5mm]
+    r_1    & \approx \frac{-10.57 + \sqrt{\Delta}}{2(-22.43)}                         \qquad  r_2  \approx \frac{-10.57 + \sqrt{\Delta}}{2(-22.43)} \\
+    r_1    & \approx -2.558                                                           \qquad\qquad\quad\thinspace  r_2  \approx 3.030               \\[5mm]
+    h      & \approx \frac{-2.558 + 3.03}{2} \approx 0.236                                                                                          \\
+    k      & = Q(h) \approx -22.43(0.236)^2 + (10.57)(0.236) + 173.84 \approx 175.085                                                               \\[5mm]
+    Q_1(x) & \approx -22.43(x - 0.236)^2 + 175.085
+\end{align*}
+
+Applying the same process for $Q_2(x)$, \quad $Q_2(x) \approx -27.4(x - 1.094)^2 + 175.344$. \\
+
+As noted by the discussion in \ref{results}, the pattern observed in all
+collected data appears to be cyclical. Here, this is further reciprocated as the
+values of $a$ for both $Q_1$ and $Q_2$ are very similar, potentially alluding to
+the fact that all peaks are roughly the same in shape.
+
+This means that it may be a valid approach to represent it as a series of the
+same equations with a constant offset, called the "period". We can use the
+already found coordinates of the vertices of $Q_1$ and $Q_2$ to find the value
+of the period $p$.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                axis y line=middle,
+                axis x line=bottom,
+                xmin=-0.5,
+                xmax=2,
+                ymin=165,
+                ymax=180,
+                width=12cm,
+                samples=60,
+                no markers,
+                grid,
+                x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                y label style={at={(axis description cs:-0.1,.5)},rotate=90,anchor=south},
+                xlabel={Time (s)}]
+            ylabel={Height (cm)},
+            ]
+            \addplot [domain=-0.5:2, ultra thick, blue] {-22.43*(x - 0.236)^2 + 175.085};
+            \node [blue] at (axis cs:1.05,166) {$Q_1(x)$};
+            \addplot [domain=-0.5:2, mark=none, ultra thick, orange] {-27.4*(x-1.094)^2+175.344};
+            \node [orange] at (axis cs:1.85,166) {$Q_2(x)$};
+
+            \draw [dashed] (axis cs:0.236,172) -- (axis cs:0.236,178);
+            \draw [dashed] (axis cs:1.094,172) -- (axis cs:1.094,178);
+            \draw [<->,  ultra thick] (axis cs:0.236,177) -- (axis cs:1.094,177);
+            \node at (axis cs:0.67,177.5) {$p$};
+
+            \node [blue] at (axis cs:0.236,175.085) {\textbullet};
+            \node [orange] at (axis cs:1.094,175.344) {\textbullet};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{ Graphs of $Q_1$ and $Q_2$. $p$ is the horizontal
+        distance between their vertices. }
+    \label{vertexforms}
+\end{figure}
+
+Figure \ref{vertexforms} shows how it is possible to figure out the period of
+vertical head oscillation by finding the horizontal distance between the two
+vertices. In terms of the original function of the vertical head displacement,
+the vertices are the peaks of the graph, where the cycle of the function appears
+to repeat.
+
+Calculating $p$ by subtracting $Q_1$'s vertex x-coordinate $h_1$ from
+$Q_2$'s vertex x-coordinate $h_2$, it can be found that $p = 1.094 - 0.236 = 0.858$.
+
+As the x-coordinate here represents the time in seconds, the value of $p$ tells
+us that a full step of the walking cycle takes around 0.858 seconds, or 858
+milliseconds, which seems to be inline with what can approximately be observed
+in real life - it takes about a second to take a full step. \\
+
+Using the property that $p$ denotes a period, it is then possible to create a
+series of equations $y_0 \dots y_n$ which describe the step accurately at different points in
+time $t$.
+
+\begin{align*}
+    y_0 & = at^2 + k                                \\
+    y_1 & = a(t-p)^2 + k                            \\
+    y_2 & = a(t-2p)^2 + k                           \\
+        & \phantom{t=\,} \vdots                     \\
+    y_n & = a(t-np)^2 + k \qquad n \in \mathbb{Z} \\
+\end{align*}
+
+The value of $a$ defines the shape of the steps. It is reasonable to assume that
+this value depends on the physical parameters of the person walking. From the
+data collected, we can calculate the mean of $a$ values for $Q_1$ and $Q_2$ and
+use it as a good enough estimate. $a = \frac{-22.43 -27.4}{2} = -24.915$ \\
+
+Furthermore, by subtracing $p$ along the values of $t$, the graph of any $y_0
+    \dots y_n$ is horizontally translated right by $p$ with each succeeding
+equation. This means that value of $p$ determines the period between each step,
+which effectively makes it represent how fast the person walking can take steps.
+This is again dependent on the person, but for our dataset we will use the
+previously obtained value $p=0.858$. \\
+
+The value for $k$ denotes the maximum height any equation $y_0 \dots y_n$ will
+reach, as all of their vertices will have the y-coordinate $k$. As the height of
+the head from the floor will be at a maximum whenever the person's leg is fully
+extended, the value of $k$ can simply be taken as the person's standing height.
+Similarly to how $a$ was computed here, $k$ can be gotten by averaging the
+y-coordinates of the vertices of $Q_1$ and $Q_2$: $k = \frac{175.085 +
+        175.344}{2} = 175.2145$. This result is further reciprocated by the fact that
+the person measured walking in this investigation is of approximately the height
+of 175cm.
+
+In order to represent the final function as one single definition, the obtained
+equations can be restricted to a particular domain inside of a piecewise
+function $h$. The domain is simply the meeting point of two equations, which
+would happen in the middle of their vertices at a distance $\frac{p}{2}$ from
+either vertex. If any particular equation is horizontally translated by a
+distance of $np$ where $n \in \mathbb{Z}$, then the x-coordinate of the
+intersection of that equation with the next would be $(n+\frac{1}{2})p$. \\
+
+Thus, the function $h(t)$ models the vertical oscillation of a walking human with
+respect to time $t$.
+
+\[ h(t)= \begin{cases}
+        at^2 + k      & 0            \leq t < \frac{ p}{2} \\
+        a(t-p)^2 + k  & \frac{p}{2}  \leq t < \frac{3p}{2} \\
+        a(t-2p)^2 + k & \frac{3p}{2} \leq t < \frac{5p}{2} \\
+                      & \phantom{t=\,} \vdots              \\
+    \end{cases}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{final_graph.png}
+    \caption{ Graph of $h(t)$ overlayed over initial data collected.}
+    \label{final_graph}
+\end{figure}
+
+It can be observed that even though the later steps do not quite reach the
+maximum height due to the limited walking space available, the data is quite
+nicely fit by the graph of $h(x)$, leading to the conclusion that the model is
+accurate.
+
+\subsubsection{Feet vertical oscillation}
 
 \section{Conclusion}
+From the models obtained for the vertical oscillation of both the head and feet
+of a walking human, it is evident that polynomials are an effective way to model
+the obtained data. However, it is important to note that the method through
+which the polynomial is fitted to the graph plays a highly important role in the
+accuracy of the final result. Each of the explored fitting methods has its own
+strengths and limitations, so it is important to choose wisely for the dataset
+at hand. \\
 
-% In order to better model the vertical oscillation while walking in general, it
-% may be more worthwhile trying to model each individual crest and trough.
+The models derived, themselves, may not necessarily have a high ecological
+validity in that they describe the motion of one person's particular walking
+style, which in and of itself is not particularly ensured to remain constant.
+Although the model demonstrates malleability through its parameters, it would
+potentially be worthwhile to add complexity based on more granular real life
+physical properties of the person. \\
+
+Furthermore, while the models fit to the dataset well in some regions, it would
+potentially be meritous, as an extension to the work done here, to attempt to
+model the dataset using a wave function like $y=\sin x$. While this would reduce
+the accuracy of the fit in some places, it would produce a simpler definition of
+the model which may be of benefit to some users seeking this simplicity over
+overall accuracy. \\
+
+In general, the resulting functions obtained throughout this investigation are
+sufficient at modelling the vertical oscillation of the human body while
+walking.
+
+\section{References}
 
 \end{document}

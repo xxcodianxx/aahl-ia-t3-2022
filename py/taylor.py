@@ -21,14 +21,18 @@ xs = [point[0] for point in points]
 ys = [point[1] for point in points]
 
 # plot original data
-plt.scatter(xs, ys, lineright_manualstyle='dashed', c='lightgray')
+plt.scatter(xs, ys, linestyle='dashed', c='lightgray')
 
 DEGREE = int(sys.argv[2])
 
 data_domain = (min(xs), max(xs))
 data_domain_size = data_domain[1] - data_domain[0]
 
-data_range = (min(ys), max(ys))
+data_range = (min(ys), max(ys) + 1)
+
+def plot_poly(coeffs, d_xs):
+    equation = str(Polynomial(list(reversed([round(c, 2) for c in coeffs])))).replace("**", "^").replace(' x', 'x').replace('x^1 ', 'x ')
+    plt.plot(d_xs, np.polyval(coeffs, d_xs), label=equation)
 
 def fit_for_bound(lower_bound, upper_bound, degree=None):
     plt.axvline(lower_bound, c='lightblue', linestyle='dotted')
@@ -46,10 +50,8 @@ def fit_for_bound(lower_bound, upper_bound, degree=None):
     s_ys = [point[1] for point in subset]
 
     # fit a polynomial
-    poly = np.polyfit(s_xs, s_ys, degree or DEGREE)
-
-    equation = str(Polynomial([round(c, 2) for c in poly])).replace("**", "^").replace(' x', 'x').replace('x^1 ', 'x ')
-    plt.plot(xs, np.polyval(poly, xs), label=equation)
+    coeffs = np.polyfit(s_xs, s_ys, degree or DEGREE)
+    plot_poly(coeffs, s_xs)
 
 def division_partition(number):
     step_size = data_domain_size / number
@@ -74,15 +76,15 @@ def peaks_partition():
         next = points[i+1]
 
         if ((cur[1]-next[1]) > 0) == ((cur[1]-last[1]) > 0):
-            # if ((cur[1]-next[1]) < 0):
-            #     continue
+            if ((cur[1]-next[1]) < 0):
+                continue
             peaks.append(cur[0])
 
     # deduplicate
     unique_peaks = []
     last_peak = 0
     for peak in peaks:
-        if abs(last_peak - peak) > 0.1: # 0.25
+        if abs(last_peak - peak) > 0.25: # 0.25
             unique_peaks.append(peak)
         last_peak = peak
 
@@ -112,19 +114,20 @@ def peaks_partition():
         fit_for_bound(low, high)
 
 # peaks_partition()
-# division_partition(6)
+division_partition(6)
 # fit_for_bound(0.0, 0.89)
 # fit_for_bound(0.89, 1.525)
-fit_for_bound(1.6, 1.9, 2)
+# fit_for_bound(1.6, 1.9, 2)
 # fit_for_bound(1.8, 2.4)
-fit_for_bound(1.9, 2.3, 3)
+# fit_for_bound(1.9, 2.3, 3)
+# plot_poly(coeffs=[-27.4, 59.97, 142.53], d_xs=xs)
 
 plt.legend()
 plt.ylabel('Height (cm)')
 plt.xlabel('Time (s)')
-plt.title(f'Manually selected polynomial fit for vertical right foot displacement crest')
+plt.title(f'Degree {DEGREE} polynomial fit for vertical head displacement (6 partitions)')
 # plt.title('Bad fit for a quadratic')
-plt.xlim(data_domain)
-plt.ylim(data_range)
+# plt.xlim(data_domain)
+# plt.ylim(data_range)
 # plt.xlim([1.5, 2.5])
 plt.show()
