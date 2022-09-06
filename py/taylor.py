@@ -21,7 +21,7 @@ xs = [point[0] for point in points]
 ys = [point[1] for point in points]
 
 # plot original data
-plt.scatter(xs, ys, linestyle='dashed', c='lightgray')
+plt.scatter(xs, ys, lineright_manualstyle='dashed', c='lightgray')
 
 DEGREE = int(sys.argv[2])
 
@@ -30,7 +30,7 @@ data_domain_size = data_domain[1] - data_domain[0]
 
 data_range = (min(ys), max(ys))
 
-def fit_for_bound(lower_bound, upper_bound):
+def fit_for_bound(lower_bound, upper_bound, degree=None):
     plt.axvline(lower_bound, c='lightblue', linestyle='dotted')
     plt.axvline(upper_bound, c='lightblue', linestyle='dotted')
 
@@ -46,10 +46,10 @@ def fit_for_bound(lower_bound, upper_bound):
     s_ys = [point[1] for point in subset]
 
     # fit a polynomial
-    poly = np.polyfit(s_xs, s_ys, DEGREE)
+    poly = np.polyfit(s_xs, s_ys, degree or DEGREE)
 
     equation = str(Polynomial([round(c, 2) for c in poly])).replace("**", "^").replace(' x', 'x').replace('x^1 ', 'x ')
-    plt.plot(s_xs, np.polyval(poly, s_xs), label=equation)
+    plt.plot(xs, np.polyval(poly, xs), label=equation)
 
 def division_partition(number):
     step_size = data_domain_size / number
@@ -111,20 +111,20 @@ def peaks_partition():
     for (low, high) in sub:
         fit_for_bound(low, high)
 
-peaks_partition()
+# peaks_partition()
 # division_partition(6)
 # fit_for_bound(0.0, 0.89)
 # fit_for_bound(0.89, 1.525)
-# fit_for_bound(1.6, 1.98)
+fit_for_bound(1.6, 1.9, 2)
 # fit_for_bound(1.8, 2.4)
-# fit_for_bound(1.9, 2.3)
+fit_for_bound(1.9, 2.3, 3)
 
 plt.legend()
 plt.ylabel('Height (cm)')
 plt.xlabel('Time (s)')
-plt.title(f'Degree {DEGREE} polynomial fit for vertical right foot displacement (crests & troughs)')
+plt.title(f'Manually selected polynomial fit for vertical right foot displacement crest')
 # plt.title('Bad fit for a quadratic')
-# plt.xlim(data_domain)
-# plt.ylim(data_range)
+plt.xlim(data_domain)
+plt.ylim(data_range)
 # plt.xlim([1.5, 2.5])
 plt.show()

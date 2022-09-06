@@ -6,13 +6,16 @@
 \usepackage{physics}
 \usepackage{pgfplots}
 \usepackage{mathtools}
-\usepackage[hmarginratio=1:1]{geometry}
+\usepackage[hmarginratio=1:1, margin=0.5in, includeheadfoot]{geometry}
 \usepackage{float}
 \usepackage[affil-it]{authblk}
-\usepackage{graphicx}
-% \usepackage{wrapfig}
+\usepackage{wrapfig}
 \usepackage{subfig}
+\usepackage{setspace}
+\usepackage{graphicx}
 \graphicspath{ {./res/} }
+
+\doublespacing % Set line spacing to 1.5
 
 % \usepackage{xcolor}
 % \pagecolor[rgb]{0,0,0}
@@ -112,7 +115,7 @@ software, albeit with a more elaborate setup than my improvised one.
 Figure \ref{mocap} shows the computer side of the tracking setup. I used two IR
 tracking sensors (\texttt{ref\_point\_0} and \texttt{ref\_point\_1}) pointed at
 the area I was to walk through, and set up the software so that it tracked my
-head and feet, to which the tracking points were attached to. \\
+head and feet, to which the tracking points were attached to.
 
 After some testing with moving the tracking point along a ruler, I found that
 the position data returned was accurate to two millimeters, which is far beyond
@@ -163,7 +166,7 @@ the person walking would be starting the step from a standstill. \\
 It is also noteworthy to talk about the small secondary bump following the
 crest, visible in all crests, but most prominent in the second step of the right
 foot. This could be explained as the foot of the person walking maintaining an
-approximate level height, then suddenly returning back to the ground on the
+approximate level height, then suddenly returning to the ground on the
 "falling edge" of a step. In reality, the prominence of this secondary bump
 could be specific to the walking style of the person, however, it is significant
 enough to the point where it cannot be disregarded as simple error.
@@ -216,8 +219,9 @@ Ultimately, the method that is most applicable to this type of task is some type
 of regression. Since we are trying to fit a polynomial to the data, polynomial
 regression with some cost function will work nicely. For the cost function, the
 "least squares" has been chosen for its simplicity, effectivity and widespread
-use. \\
+use.
 
+\pagebreak
 \section{Least squares polynomial fitting}
 \subsection{Theory}
 Suppose that there is a polynomial $P$ of degree $k$ so that
@@ -225,12 +229,8 @@ Suppose that there is a polynomial $P$ of degree $k$ so that
     P(x)= a_0 + a_1 x + \cdots + a_{k-1} x^{k-1} + a_k x^k
 \end{align*}
 
-The coefficients $a_0$ through $a_k$ are the unknowns that must be solved for,
-defining the shape of the polynomial. Assuming one wants to fit this polynomial
-to a set of points, it would be useful to know how accurately it can model the
-dataset, given a guess of the its coefficients $a_0 \cdots a_k$.
 
-\begin{figure}[H]
+\begin{wrapfigure}[12]{r}{7cm}
     \centering
     \begin{tikzpicture}
         \begin{axis}[
@@ -240,8 +240,8 @@ dataset, given a guess of the its coefficients $a_0 \cdots a_k$.
                 xmax=4,
                 ymin=-4,
                 ymax=4,
-                height=12.0cm,
-                width=12.0cm,
+                % height=12.0cm,
+                % width=12.0cm,
                 grid,
                 xtick={-4,...,4},
                 ytick={-4,...,4},
@@ -260,7 +260,12 @@ dataset, given a guess of the its coefficients $a_0 \cdots a_k$.
         Example cubic ($k=3$) $P(x)$ fitting 5 points.
     }
     \label{fig1}
-\end{figure}
+\end{wrapfigure}
+
+The coefficients $a_0$ through $a_k$ are the unknowns that must be solved for,
+defining the shape of the polynomial. Assuming one wants to fit this polynomial
+to a set of points, it would be useful to know how accurately it can model the
+dataset, given a guess of its coefficients $a_0 \cdots a_k$.
 
 Figure \ref{fig1} depicts one such cubic polynomial. It is evident from the
 graph that $P(x)$ does not exactly pass through every point - rather, there is a
@@ -307,7 +312,7 @@ equations:
 \end{align*}
 
 From this point, the method requires solving the above system for the most
-closely fitting coefficients, ie. minimizing $R^2$. There are several methods
+closely fitting coefficients, i.e. minimizing $R^2$. There are several methods
 through which this system of equations can be simplified and solved, the proof
 of which, however, is beyond the scope of this investigation. After
 simplification, the matrix system can be represented as
@@ -330,7 +335,7 @@ simplification, the matrix system can be represented as
 \end{align*}
 
 An interesting point about this method is that if the number of points $n$ that
-the polynomial must be fit to exceeds the degree $k$, the polynomial can never
+the polynomial must be fit to exceed the degree $k$, the polynomial can never
 pass through all of them exactly, which makes sense given that the polynomial
 may only have a maximum of $k-1$ turning points. This means that the above
 system of matrices is "over-determined", that is, it can never give a perfect
@@ -360,11 +365,11 @@ accurately model one crest or trough of a step, in reality it would not be
 practical to model the entire collected data-set with just one. There are
 several ways to account for these issues. \\
 
-\subsubsection{Even "naive" segmentation}
+\subsubsection{Even "naive" subdivision}
 \label{section_naive_seg}
 A naive solution to this problem is to segment the entire domain into even
 chunks, then fit a polynomial to the portion of the graph (drawn as a punctured
-line) in those sub-regions (divided vertically with dotted lines):
+line) in those subregions (divided vertically with dotted lines):
 
 \begin{figure}[H]
     \centering
@@ -388,7 +393,7 @@ to refine the fitting method. While the first crest in Figure \ref{naive_head}
 appears to be well-fitted, the same cannot be said for the succeeding crests or
 troughs.
 
-A possible explanation for this is that the selection of sub-regions does not
+A possible explanation for this is that the selection of subregions does not
 respect any of the graph features that a quadratic might benefit from, like the
 aforementioned smooth curvature at the crests and troughs. For example, the
 third crest's equation (red) is a quadratic that acts very similarly to a linear
@@ -399,10 +404,12 @@ is not a very good fit.
 In the more complex graph of Figure \ref{naive_right}, this is further
 reciprocated. Even though a higher degree of polynomial is used, some regions of
 the graph are fitted far better than others, like the first crest compared to
-the second, which, due to the naive segmentation, is forcefully cut in two also
-resulting in a poor fit.
+the second, which, due to the naive segmentation, is forcefully cut in two.  \\
 
-\subsubsection{Peak segmentation}
+While this method is a good start, it has a plethora of shortcomings which can
+be addressed quite easily. In general, the fit of the graph is quite poor 
+
+\subsubsection{Crest \& trough subdivision}
 In order to address the issues found in \ref{section_naive_seg}, and take
 advantage of the patterns identified, we are going to have to examine our
 dataset more closely. Polynomial functions are able to fit a dataset
@@ -425,41 +432,46 @@ and they can almost perfectly be fit by a quadratic.
     \label{bad_good_quadratics}
 \end{figure}
 
-In Figure \ref{good_quadratic}, the crest can be pefectly fit by a concave down
+In Figure \ref{good_quadratic}, the crest can be perfectly fit by a concave down
 quadratic, as the region in which the regression was performed was limited to
 just around the crest. In contrast, Figure \ref{bad_quadratic} shows a misplaced
 quadratic that is trying to fit an area not suited for its shape, resulting in
-heavy deviations from the data. \\
+heavy deviations from the data.
 
 Knowing this, it is possible to improve the segmentation method to look for
 areas that might be a good fit for specific polynomial functions. For a
 quadratic, looking for the crests and troughs to harness the aforementioned
-benefits from their shape is a good staring point. \\ 
+benefits from their shape is a good staring point.
 
 Crests and troughs can be considered the local minima and maxima of the data at
-that point. It is a property of functions that these minimum and maximum points
+their peaks. It is a property of functions that these minimum and maximum points
 are also turning points, meaning the derivative of the function changes sign
 around them. Applying this to the current data, it is sufficient to find a point
-around which both neighbouring points are either both above or both below in the
-y-axis.
+around which both neighboring points are either both above or both below in the
+y-axis, as this effectively compares if the slopes of the two neighboring
+points relative to the central point have inverted.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{p_peaks_head_2.png}
-    \caption{Quadratic fitting for vertical head oscillation data with crest \& trough detection} 
+    \includegraphics[width=14cm]{p_peaks_head_2.png}
+    \caption{ Quadratic fitting for vertical head oscillation data with crest \&
+        trough detection} 
     \label{peaks_head}
 \end{figure}
 
 Figure \ref{peaks_head} demonstrates this detection method in action - the red
 dashed vertical lines show the point at which a crest or trough was detected,
-and the blue dotted lines show the start \& end of each fitting region, these
-are placed between each creast or trough. Compared to the naive fit seen in
-Figure \ref{naive_head}, this is certainly a much better outcome.
+and the blue dotted lines show the start \& end of each fitting region. These
+region borders are placed between each crest or trough, by averaging their
+position in the domain. Compared to the naive fit seen in Figure
+\ref{naive_head}, this is certainly a much better outcome as we can see the
+quadratics' curves being used more effectively around the peaks.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{p_peaks_crestsonly_head_2.png}
-    \caption{Quadratic fitting for vertical head oscillation data with crest detection only} 
+    \includegraphics[width=14cm]{p_peaks_crestsonly_head_2.png}
+    \caption{ Quadratic fitting for vertical head oscillation data with crest
+        detection only } 
     \label{crestsonly_head}
 \end{figure}
 
@@ -473,10 +485,36 @@ concave down.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{p_peaks_right_3.png}
-    \caption{Cubic fitting for vertical right foot oscillation data with crest \& trough detection} 
+    \includegraphics[width=14cm]{p_peaks_right_3.png}
+    \caption{ Cubic fitting for vertical right foot oscillation data with crest
+        \& trough detection } 
     \label{peaks_right}
 \end{figure}
+
+Figure \ref{peaks_right} shows the vertical oscillation of a right foot, with
+cubics fitted using the new method. It can be seen that with crest \& trough
+detection, the results are still much more accurate than the naive approach.
+However, it should be noted that the data for the motion of feet is
+significantly more complex to model than the data for the head, hence the
+comparative inaccuracy of the fit. In the end, even though there is some
+evidence of improvement from the previous method for dividing subregions for the
+vertical oscillation of the feet, it is still insufficient to draw conclusions
+from.
+
+\subsubsection{Manual subdivision}
+Although a fitting solution has been found for the graph of the vertical
+oscillation of the head while walking (Figure \ref{crestsonly_head}), in order
+to fit a polynomial to the more complex graphs of the feet, a more precise
+method is required. \\
+
+As the peaks observed in these graphs appear to repeat over a period, it would
+potentially be useful to fit a polynomial to one of these by manually specifying
+the domain. This would then allow us to extrapolate the fitted polynomial to
+other peaks. \\
+
+\subsection{Assembling}
+
+\section{Conclusion}
 
 % In order to better model the vertical oscillation while walking in general, it
 % may be more worthwhile trying to model each individual crest and trough.
