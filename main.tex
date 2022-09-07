@@ -8,12 +8,11 @@
 \usepackage{mathtools}
 \usepackage[hmarginratio=1:1, margin=0.5in, includeheadfoot]{geometry}
 \usepackage{float}
-\usepackage[affil-it]{authblk}
 \usepackage{wrapfig}
 \usepackage{subfig}
 \usepackage{setspace}
 \usepackage{graphicx}
-\usepackage{multicol}
+\usetikzlibrary{decorations.pathreplacing,calligraphy}
 \graphicspath{ {./res/} }
 
 \doublespacing % Set line spacing to 1.5
@@ -22,7 +21,7 @@
 % \pagecolor[rgb]{0,0,0}
 % \color[rgb]{0.5,0.5,0.5}
 
-\title{Modelling the oscillation of walking humans}
+\title{\vspace{-3cm}Modelling the oscillation of walking humans}
 \author{Martin Velikov}
 \date{August 2022}
 
@@ -41,7 +40,7 @@ is complex and rather effective for the energy we expend doing it. We have tried
 to analyze the way we walk, in order to create better tools that, well, enable
 us to walk better, like shoes or corrective soles. One fundamental side product
 of our peculiar way of motion is that the entire upper body undergoes vertical
-oscillation , or put simply, we move and sway up and down whenever we walk.
+oscillation, or put simply, we move and sway up and down whenever we walk.
 
 \subsection{Aim}
 The aim of this investigation is, using mathematical functions, to model this
@@ -65,7 +64,7 @@ technology.
 
 \subsection{Personal motivation}
 Personally, I am interested in the ways technology can help us in our daily
-lives. Being able to reliably apply a model to aid the aforementioned usecases
+lives. Being able to reliably apply a model to aid the aforementioned use cases
 would be a tremendous achievement that would help integrate technology into
 modern lives. 
 I also have an interest in physiology \& fitness,
@@ -85,7 +84,7 @@ However, both methods posed significant issues with them:
           complex to make it even approximate the properties of a real human
           leg, which would not be worthwhile since I would only be trying to
           extract data from it once or twice.
-    \item Tracing over a film of someone walking poses several accuracy \&
+    \item Tracing over a film of someone walking poses some accuracy \&
           precision errors. For example, determining the location of the part of
           the leg that needs to be tracked would rely on a visual estimate,
           which is subject to the many issues of a video camera, such as
@@ -95,7 +94,7 @@ However, both methods posed significant issues with them:
 
 \subsection{Solution}
 In order to address the issues with the initially proposed data collection
-methods, I opted for a more robust \& accurate to real life measurment technique
+methods, I opted for a more robust \& accurate to real life measurement technique
 of actually motion tracking in 3D while walking. For the purposes of this
 investigation, I did not require full limb-for-limb tracking - only my head, and
 the bases of my feet. \\
@@ -211,7 +210,7 @@ very worthwhile. Based off of this, the second advantage - fitting polynomials
 to best approximate data is a well-explored topic, with several well-established
 working methods which can be used to provide shockingly accurate results. The
 last of these advantages is specific to the shape of our graph - it has smooth
-curves, which polynomials are really good at representing. \\
+curves, which polynomials are excellent at representing. \\
 
 There are several relatively easy methods to fit polynomials to a function,
 supposing that you can find its derivative. One possible method is constructing
@@ -286,8 +285,10 @@ graph of $P$ could be simply represented by
 The absolute value of the difference is used since $r$ should be indicative of
 the deviation from the graph, therefore the direction of difference is
 irrelevant. Furthermore, instead  of taking the modulus of the right side, it
-can simply be squared in order to accentuate any error, and be wieldy to derive.
-This leaves the final equation of the difference $r$ between a point $(x, y)$ as
+can simply be squared in order to accentuate any error, but more importantly be
+derivable, as the absolute value produces discontinuous derivatives. (Weisstein,
+2022) This leaves the final equation of the difference $r$ between a point $(x,
+y)$ as
 
 \begin{align*}
     r=(y-P(x))^2
@@ -295,7 +296,7 @@ This leaves the final equation of the difference $r$ between a point $(x, y)$ as
 
 The total measure of deviation $R^2$ from the graph $P(x)$, called the
 "residual", can be obtained by summing up the aforementioned vertical
-differences for $n$ points with coordinates $(x, y)$:
+differences for $n$ points with coordinates $(x, y)$: (Weisstein, 2022)
 
 \begin{align*}
     R^2 & = \sum^n_{i=1}[y_i-P(x_i)]^2 \\
@@ -307,7 +308,7 @@ The partial derivative of the residual with respect to each coefficient can be
 found, and set to zero in order to ensure that coefficient contributes a minimum
 of the error in terms of the entire equation - this effectively minimizes $R^2$,
 which is the goal of this method. This results in the following system of
-equations with partial derivatives that must be brought to zero:
+equations with partial derivatives that must be brought to zero: (Weisstein, 2022)
 
 \begin{align*}
     \pdv{(R^2)}{a_0}     & = -2 \sum^n_{i=1}[y_i-P(x_i)] x^0     & = 0 \\
@@ -321,7 +322,7 @@ From this point, the method requires solving the above system for the most
 closely fitting coefficients, i.e. minimizing $R^2$. There are several methods
 through which this system of equations can be simplified and solved, the proof
 of which, however, is beyond the scope of this investigation. After
-simplification, the matrix system can be represented as
+simplification, the matrix system can be represented as (Weisstein, 2022)
 
 \begin{align*}
     \begin{bmatrix}
@@ -370,6 +371,11 @@ known, it is possible to apply it to the dataset. While a polynomial might
 accurately model one crest or trough of a step, in reality it would not be
 practical to model the entire collected data-set with just one. There are
 several methods to account for this issue which will be explored below. \\
+
+As for actually fitting the polynomials using the above method, I wrote a
+computer program in the Python programming language which solved the system
+using the NumPy mathematics library and MatPlotLib for visualization. I further
+used MATLAB to draw some figures and draw insights.
 
 \subsubsection{Even "naive" subdivision}
 \label{section_naive_seg}
@@ -653,14 +659,14 @@ in real life - it takes about a second to take a full step. \\
 
 Using the property that $p$ denotes a period, it is then possible to create a
 series of equations $y_0 \dots y_n$ which describe the step accurately at different points in
-time $t$.
+time $x$.
 
 \begin{align*}
     y_0 & = at^2 + k                                \\
-    y_1 & = a(t-p)^2 + k                            \\
-    y_2 & = a(t-2p)^2 + k                           \\
+    y_1 & = a(x-p)^2 + k                            \\
+    y_2 & = a(x-2p)^2 + k                           \\
         & \phantom{t=\,} \vdots                     \\
-    y_n & = a(t-np)^2 + k \qquad n \in \mathbb{Z} \\
+    y_n & = a(x-np)^2 + k \qquad n \in \mathbb{Z} \\
 \end{align*}
 
 The value of $a$ defines the shape of the steps. It is reasonable to assume that
@@ -668,12 +674,13 @@ this value depends on the physical parameters of the person walking. From the
 data collected, we can calculate the mean of $a$ values for $Q_1$ and $Q_2$ and
 use it as a good enough estimate. $a = \frac{-22.43 -27.4}{2} = -24.915$ \\
 
-Furthermore, by subtracing $p$ along the values of $t$, the graph of any $y_0
-    \dots y_n$ is horizontally translated right by $p$ with each succeeding
+Furthermore, by subtracting $p$ along the values of $t$, the graph of any $y_0
+\dots y_n$ is horizontally translated right by $p$ with each succeeding
 equation. This means that value of $p$ determines the period between each step,
 which effectively makes it represent how fast the person walking can take steps.
 This is again dependent on the person, but for our dataset we will use the
-previously obtained value $p=0.858$. \\
+previously obtained value $p=0.858$. If a generalization is necessary, one can
+use $p = h_2 - h_1$. \\
 
 The value for $k$ denotes the maximum height any equation $y_0 \dots y_n$ will
 reach, as all of their vertices will have the y-coordinate $k$. As the height of
@@ -683,10 +690,10 @@ Similarly to how $a$ was computed here, $k$ can be gotten by averaging the
 y-coordinates of the vertices of $Q_1$ and $Q_2$: $k = \frac{175.085 +
         175.344}{2} = 175.2145$. This result is further reciprocated by the fact that
 the person measured walking in this investigation is of approximately the height
-of 175cm.
+of 175 cm.
 
 In order to represent the final function as one single definition, the obtained
-equations can be restricted to a particular domain inside of a piecewise
+equations can be restricted to a particular domain inside a piece wise
 function $h$. The domain is simply the meeting point of two equations, which
 would happen in the middle of their vertices at a distance $\frac{p}{2}$ from
 either vertex. If any particular equation is horizontally translated by a
@@ -696,10 +703,10 @@ intersection of that equation with the next would be $(n+\frac{1}{2})p$. \\
 Thus, the function $h(t)$ models the vertical oscillation of a walking human with
 respect to time $t$.
 
-\[ h(t)= \begin{cases}
-        at^2 + k      & 0            \leq t < \frac{ p}{2} \\
-        a(t-p)^2 + k  & \frac{p}{2}  \leq t < \frac{3p}{2} \\
-        a(t-2p)^2 + k & \frac{3p}{2} \leq t < \frac{5p}{2} \\
+\[ h(x)= \begin{cases}
+        ax^2 + k      & 0            \leq x < \frac{ p}{2} \\
+        a(x-p)^2 + k  & \frac{p}{2}  \leq x < \frac{3p}{2} \\
+        a(x-2p)^2 + k & \frac{3p}{2} \leq x < \frac{5p}{2} \\
                       & \phantom{t=\,} \vdots              \\
     \end{cases}
 \]
@@ -707,7 +714,7 @@ respect to time $t$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{final_graph.png}
-    \caption{ Graph of $h(t)$ overlayed over initial data collected.}
+    \caption{ Graph of $h(x)$ overlaid over initial data collected.}
     \label{final_graph}
 \end{figure}
 
@@ -717,8 +724,235 @@ nicely fit by the graph of $h(x)$, leading to the conclusion that the model is
 accurate.
 
 \subsubsection{Feet vertical oscillation}
+To assemble the final model for the oscillation of the feet, it is a good start
+to convert the quadratic $Q(x)$ into vertex form, as already shown.
 
-\section{Conclusion}
+\begin{align*}
+    Q(x) &= -272.86x^2 + 981.44x -864.65 \\
+         &\approx -272.86(x - 1.798)^2 + 17.876 \\
+         &\therefore \text{Vertex at (1.798, 17.876)}
+\end{align*}
+
+It is also possible to find the x-coordinate of the inflection point of the
+cubic $C(x)$ by finding the root of the second derivative.
+
+\begin{align*}
+        C(x) &= -493.51x^3+3120.52x^2-6577.99x+4633 \\
+        \dv{C}{x} &= -1480.53x^2+6241.04x-6577.99 \\
+        \dv[2]{C}{x} &= -2961.06x + 6241.04
+\end{align*}
+
+\begin{align*}
+    -2961.06x + 6241.04 &= 0 \\
+    -2961.06x  &= -6241.04 \\
+    x &= \frac{-6241.04}{-2961.06} \\
+    x &\approx 2.108
+\end{align*}
+
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                axis y line=middle,
+                axis x line=bottom,
+                xmin=1.5,
+                xmax=2.5,
+                ymin=5,
+                ymax=19,
+                width=14cm,
+                samples=60,
+                no markers,
+                grid,
+                x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                y label style={at={(axis description cs:-0.1,.5)},rotate=90,anchor=south},
+                xlabel={Time (s)},
+                ylabel={Height (cm)},
+            ]
+            % quadratic
+            \addplot [domain=1.5:2.5, ultra thick, blue] {-272.86*x^2+981.44*x-864.65};
+            \node [blue] at (axis cs:2.07,6) {$Q(x)$};
+            % cubic
+            \addplot [domain=1.5:2.5, mark=none, ultra thick, red] {-493.51*x^3+3120.52*x^2-6577.99*x+4633};
+            \node [red] at (axis cs:2.37,6) {$C(x)$};
+
+            % vertex & inflection vline
+            \draw [dashed] (axis cs:1.798,14) -- (axis cs:1.798,19);
+            \draw [dashed] (axis cs: 2.108,9) -- (axis cs:2.108,16);
+            
+            % p line
+            \draw [] (axis cs:1.798,15) -- (axis cs:2.108,15);
+            
+            % p
+            \draw [decorate, decoration = {calligraphic brace, amplitude=10pt}] (axis cs:1.81,15.2) -- (axis cs:2.09,15.2);
+            \node at (axis cs:1.95,16.3) {$p$};
+
+            % p/2
+            \draw [decorate, decoration = {calligraphic brace, mirror, amplitude=5pt}] (axis cs:1.96,14.8) -- (axis cs:2.09,14.8);
+            \node at (axis cs:2.025,13.8) {$\frac{p}{2}$};
+
+            % right angle
+            % \draw[draw=black] (axis cs:1.95,14.5) rectangle ++(axis cs:1.5,1.5);
+
+            \node (rect) at (axis cs:1.935,14.75) [draw,minimum width=3.5mm,minimum height=3.5mm] {};
+
+            \node [blue] at (axis cs:1.798,17.876) {\textbullet};
+            \node [orange] at (axis cs:2.108,10.311) {\textbullet};
+
+            \draw [] (axis cs: 1.95,15) -- (axis cs:1.95,8);
+        \end{axis}
+    \end{tikzpicture}
+    \caption{ Graphs of $Q$ and $C$. $d$ is the horizontal distance between the
+        vertex of $Q$ and the inflection point of $C$. A perpendicular line
+        bisects the created horizontal line at $d/2$ from either side. }
+    \label{feetmodel}
+\end{figure}
+
+In order to express one peak as a single curve, first it can be expressed as a
+piece wise $w(x)$ between the cubic and the quadratic, where the functions change
+over at a horizontal distance $\frac{d}{2}$ away from the quadratic vertex's
+x-coordinate $h$.
+
+\[ w(x)= \begin{cases} -272.86(x-1.798)^2+17.876 & x \leq h + \frac{d}{2}\\
+    -493.51x^3+3120.52x^2-6577.99x+4633 & x > h + \frac{d}{2} \\
+\end{cases}
+\]
+
+However, this produces an undesired effect: the function is now discontinuous at
+the meeting point $h+\frac{d}{2}$, which is not convenient if one wishes to use
+this model to smooth some sort of movement as there would be a noticeable "bump"
+where the functions change over. \\
+
+In order to find a better place to put the meeting point, we can just equate the
+cubic and quadratic, then solve for the roots of the resulting cubic. \\
+
+\begin{align*}
+    C(x) &= Q(x) \\
+    -493.51x^3+3120.52x^2-6577.99x+4633 &= -272.86x^2 + 981.44x -864.65 \\
+    -493.51 x^3 + 3393.38 x^2 - 7559.43 x + 5497.65 &= 0 \\
+    \text{Solve using cubic formula, not shown for brevity} \\
+    x \approx 1.89006 \qquad x \approx 1.926 \qquad x \approx 3.060\\
+\end{align*}
+
+We can pick any one of these values for the x-coordinate of the transition and
+get a continuous graph, however the solution for $x \approx 3.060$ is beyond the
+region of interest where we wish to join the functions together, so it can be
+disregarded. From the solutions around 2, $x \approx 1.926$ has been chosen as
+it appears to create a more smooth final function. Using this as a meeting
+point, the piece wise function $w$ becomes:
+
+\[ w(x)= \begin{cases} 
+    -272.86(x-1.798)^2+17.876 & x \leq 1.926 \\
+    -493.51x^3+3120.52x^2-6577.99x+4633 & x > 1.926
+\end{cases}
+\]
+
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                axis y line=middle,
+                axis x line=bottom,
+                xmin=1.5,
+                xmax=2.5,
+                ymin=5,
+                ymax=19,
+                width=14cm,
+                samples=60,
+                no markers,
+                grid,
+                x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                y label style={at={(axis description cs:-0.1,.5)},rotate=90,anchor=south},
+                xlabel={Time (s)},
+                ylabel={Height (cm)},
+            ]
+            % quadratic
+            \addplot [domain=1.5:1.926, ultra thick, blue] {-272.86*x^2+981.44*x-864.65};
+            \addplot [domain=1.926:2.5, mark=none, ultra thick, blue] {-493.51*x^3+3120.52*x^2-6577.99*x+4633};
+            \node [blue] at (axis cs:1.926,13.405) {\textbullet};
+            \node [blue] at (axis cs:2.05,14) {$(1.926, w(1.926))$};
+            \node [blue] at (axis cs:1.7,18) {$w(x)$};
+
+            \node [blue] at (axis cs:1.55,6.8) {$r_1$};
+            \node [blue] at (axis cs:1.589,6) {\textbullet};
+            \node [blue] at (axis cs:2.35,6.8) {$r_2$};
+            \node [blue] at (axis cs:2.31,6) {\textbullet};
+
+            \draw [decorate, decoration = {calligraphic brace, amplitude=20pt}] (axis cs:1.589,6) -- (axis cs:2.31,6);
+            \node at (axis cs:1.95,7.5) {$r$};
+
+            \draw [dashed] (axis cs: 1.5,6) -- (axis cs:2.5,6);
+        \end{axis}
+    \end{tikzpicture}
+    \caption{ Final graph of continuous $w(x)$, $r$ is the distance between the
+    intersection points $r_1$ and $r_2$ of $w(x)$ with $y=6$ }
+    \label{w(x)}
+\end{figure}
+
+As suggested by, Figure \ref{feet_y} the true "floor" of the graph of the
+vertical oscillation in feet is actually above the x-axis. This is due to the
+measurement being taken from the walker's ankle and not the very base of his
+foot. Evidently, that point appears to about 6 cm above the true ground. We can
+find the "roots" $r_1$ and $r_2$ by equating $w(x) = 6$. It would also be useful
+to simply subtract 6 from the parts of $w$ in order to bring the floor to the
+true $y=0$. Solving the equality yields the solutions $x \approx 1.589$ and
+$x\approx 2.310$, giving us the values for $r_1$ and $r_2$. This, then, allows
+us to calculate the value of $r$: $r = 2.310 - 1.589 \approx 0.721$. \\
+
+The significance of $r$ is actually quite big. It was previously observed that
+the "peaks" modeled by $w(x)$ alternate for each foot, meaning only one foot can
+be undergoing a peak, while the other must be going through a plateau. This
+means that the horizontal length of the peak we just found as $r$ must
+correspond to a plateau on the graph of the other foot, therefore illustrating
+that plateaus are of the same length as peaks. \\
+
+Using this insight, it is now possible to model the final piece wise function
+$h_{R}(x)$ for the vertical oscillation of the right foot. The function must be a
+crest, followed by a trough, where both the crest and trough are $r$ units long
+in the x-axis. The graph of $w$ should be translated horizontally so that $r_1$
+is at the origin. This means that there would be a leftward horizontal
+translation by $r_1$ units. Every pair of crests \& troughs, the graph of $w$
+should also be translated to the right by $2r$ units.\\
+
+\[ h_{R}(x)= \begin{cases} 
+    w(x+r_1) & 0 \leq x < r \\
+    0 & r \leq x < 2r \\[2mm]
+    w(x + r_1 - 2r) & 2r \leq x < 3r \\
+    0 & 3r \leq x < 4r \\[2mm]
+    & \phantom{t=\,} \vdots
+\end{cases}
+\]
+
+The function for the left foot $h_{L}(x)$ would simply be the above, but with
+the order of the crests and plateaus swapped. This would effectively put the two
+graphs completely out of phase, which is the desired effect.
+
+\[ h_{L}(x)= \begin{cases} 
+    0 & 0 \leq x < r \\
+    w(x+r_1-r) & r \leq x < 2r \\[2mm]
+    0 & 2r \leq x < 3r \\
+    w(x+r_1-3r) & 3r \leq x < 4r \\[2mm]
+    & \phantom{t=\,} \vdots
+\end{cases}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{final_graph_feet.png}
+    \caption{ Graph of $h_{R}(x)$ (green) and $h_{L}(x)$ (purple) overlaid over
+    initial data collected.}
+    \label{final_graph_feet}
+\end{figure}
+
+It is evident that the functions fit the three middle peeks well, with their
+maximums \& points of transition lining up almost perfectly, which is indicative
+of a strong model. Even though the first step did not reach the maximum height,
+its features still line up horizontally with the fitted function which may
+indicate that the misalignment is due to an external factor like the first step
+not being as big as the rest.
+
+\section{Evaluation \& conclusion}
 From the models obtained for the vertical oscillation of both the head and feet
 of a walking human, it is evident that polynomials are an effective way to model
 the obtained data. However, it is important to note that the method through
@@ -731,8 +965,8 @@ The models derived, themselves, may not necessarily have a high ecological
 validity in that they describe the motion of one person's particular walking
 style, which in and of itself is not particularly ensured to remain constant.
 Although the model demonstrates malleability through its parameters, it would
-potentially be worthwhile to add complexity based on more granular real life
-physical properties of the person. \\
+potentially be worthwhile, as an extension, to add complexity based on more
+granular real life physical properties of the person. \\
 
 Furthermore, while the models fit to the dataset well in some regions, it would
 potentially be meritous, as an extension to the work done here, to attempt to
@@ -743,8 +977,15 @@ overall accuracy. \\
 
 In general, the resulting functions obtained throughout this investigation are
 sufficient at modelling the vertical oscillation of the human body while
-walking.
+walking, and are therefore a good solution to the problem of this investigation.
 
 \section{References}
+Weisstein, E., 2022. Least Squares Fitting--Polynomial -- from Wolfram
+MathWorld. [online] MathWorld. Available at:
+https://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html [Accessed
+August 2022].
 
+Weisstein, E., 2022. Least Squares Fitting -- from Wolfram MathWorld. [online]
+MathWorld. Available at:
+<https://mathworld.wolfram.com/LeastSquaresFitting.html> [Accessed August 2022].
 \end{document}
